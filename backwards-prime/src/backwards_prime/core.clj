@@ -23,20 +23,37 @@
                                                         (multiples n)))))))]
     (reduce sieve-primes candidates candidates)))
 
+(defn any?
+  [p coll]
+  (if-not (empty? coll)
+    (if (p (first coll))
+      true
+      (recur p (rest coll)))
+    false))
+
+(def cached-primes (primes 100000))
+
+(defn looks-prime?
+  "If this returns true, n is likely to be a prime."
+  [n]
+  (if (odd? n)
+    (if (contains? cached-primes n)
+      true
+      (not (any? #(= (mod n %) 0) cached-primes)))
+    false))
+
+(defn reverse-num [n] (-> n str s/reverse Integer/parseInt))
+
 (defn backwards?
   "Checks if there is a backwards prime in ps corresponding to prime p."
   [ps p]
-  (let [s (str p)
-        backward-p (Integer/parseInt (s/reverse s))]
-    (and (> (count s) 1)              ;; only two, or more, digit numbers
-         (not= p backward-p)          ;; palindromes don't count
-         (contains? ps backward-p)))) ;; has to be a prime as well
+  (let [backward-p (reverse-num p)]
+    (and (looks-prime? backward-p)    ;; has to be a prime as well
+         (not= p backward-p))))       ;; palindromes don't count
 
 (defn backwards-prime
   [start stop]
-  (let [stop-max (apply max (map #(-> % str s/reverse Integer/parseInt)
-                                 (range start (inc stop))))
-        ps (primes (max stop stop-max))
-        backward-ps (filter (partial backwards? ps) ps)]
-    (vec (sort (filter #(and (<= start %)
-                             (>= stop %)) backward-ps)))))
+  (let [prime-range (range start (inc stop))
+        ps (set (filter looks-prime? prime-range))
+        result (filter (partial backwards? ps) ps)]
+    (vec (sort result))))
