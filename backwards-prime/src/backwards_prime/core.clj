@@ -42,14 +42,12 @@
       (not (any? #(= (mod n %) 0) cached-primes)))
     false))
 
-(defn reverse-num [n] (-> n str s/reverse Integer/parseInt))
-
 (defn backwards?
   "Checks if there is a backwards prime in ps corresponding to prime p."
   [ps p]
-  (let [backward-p (reverse-num p)]
-    (and (looks-prime? backward-p)    ;; has to be a prime as well
-         (not= p backward-p))))       ;; palindromes don't count
+  (let [backward-p (-> p str s/reverse Integer/parseInt)]
+    (and (not= p backward-p)          ;; palindromes don't count
+         (looks-prime? backward-p)))) ;; has to be a prime as well
 
 (defn backwards-prime
   [start stop]
