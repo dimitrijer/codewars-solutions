@@ -1,6 +1,6 @@
 (ns backwards-prime.core
-  (require [clojure.set :refer [difference]]
-           [clojure.string :as s]))
+  (:require [clojure.set :refer [difference]]
+            [clojure.string :as s]))
 
 (defn multiples
   "Returns a lazy seq of multiples of n * i, starting from i = 3 by default and

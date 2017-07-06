@@ -1,5 +1,5 @@
 (ns pangram.core
-  (require [clojure.string :refer [lower-case]]))
+  (:require [clojure.string :refer [lower-case]]))
 
 (def alphabet
   (set (map char (range (int \a)
